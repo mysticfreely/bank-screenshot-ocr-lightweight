@@ -1,0 +1,351 @@
+{% extends "../base.html" %}
+
+{% block title %}API配置管理 - 银行截图OCR系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2>API配置管理</h2>
+        <p class="text-muted">配置第三方OCR API服务，支持多个提供商同时使用</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 百度OCR配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">百度OCR API</h5>
+                <span class="badge bg-{{ 'success' if config.baidu.enabled else 'secondary' }}">
+                    {{ '已启用' if config.baidu.enabled else '未启用' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_api_config') }}">
+                    <input type="hidden" name="provider" value="baidu">
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enabled" id="baidu_enabled" 
+                               {{ 'checked' if config.baidu.enabled else '' }}>
+                        <label class="form-check-label" for="baidu_enabled">
+                            启用百度OCR API
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="baidu_api_key" class="form-label">API Key</label>
+                        <input type="text" class="form-control" id="baidu_api_key" name="api_key" 
+                               value="{{ config.baidu.api_key }}" placeholder="请输入百度API Key">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="baidu_secret_key" class="form-label">Secret Key</label>
+                        <input type="password" class="form-control" id="baidu_secret_key" name="secret_key" 
+                               value="{{ config.baidu.secret_key }}" placeholder="请输入百度Secret Key">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="baidu_confidence" class="form-label">置信度阈值</label>
+                        <input type="number" class="form-control" id="baidu_confidence" name="confidence_threshold" 
+                               value="{{ config.baidu.confidence_threshold }}" min="0" max="1" step="0.1">
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="testAPI('baidu')">测试连接</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 腾讯OCR配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">腾讯云OCR API</h5>
+                <span class="badge bg-{{ 'success' if config.tencent.enabled else 'secondary' }}">
+                    {{ '已启用' if config.tencent.enabled else '未启用' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_api_config') }}">
+                    <input type="hidden" name="provider" value="tencent">
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enabled" id="tencent_enabled" 
+                               {{ 'checked' if config.tencent.enabled else '' }}>
+                        <label class="form-check-label" for="tencent_enabled">
+                            启用腾讯云OCR API
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tencent_secret_id" class="form-label">Secret ID</label>
+                        <input type="text" class="form-control" id="tencent_secret_id" name="secret_id" 
+                               value="{{ config.tencent.secret_id }}" placeholder="请输入腾讯云Secret ID">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tencent_secret_key" class="form-label">Secret Key</label>
+                        <input type="password" class="form-control" id="tencent_secret_key" name="secret_key" 
+                               value="{{ config.tencent.secret_key }}" placeholder="请输入腾讯云Secret Key">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tencent_region" class="form-label">地域</label>
+                        <select class="form-control" id="tencent_region" name="region">
+                            <option value="ap-beijing" {{ 'selected' if config.tencent.region == 'ap-beijing' else '' }}>北京</option>
+                            <option value="ap-shanghai" {{ 'selected' if config.tencent.region == 'ap-shanghai' else '' }}>上海</option>
+                            <option value="ap-guangzhou" {{ 'selected' if config.tencent.region == 'ap-guangzhou' else '' }}>广州</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tencent_confidence" class="form-label">置信度阈值</label>
+                        <input type="number" class="form-control" id="tencent_confidence" name="confidence_threshold" 
+                               value="{{ config.tencent.confidence_threshold }}" min="0" max="1" step="0.1">
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="testAPI('tencent')">测试连接</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 阿里云OCR配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">阿里云OCR API</h5>
+                <span class="badge bg-{{ 'success' if config.aliyun.enabled else 'secondary' }}">
+                    {{ '已启用' if config.aliyun.enabled else '未启用' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_api_config') }}">
+                    <input type="hidden" name="provider" value="aliyun">
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enabled" id="aliyun_enabled" 
+                               {{ 'checked' if config.aliyun.enabled else '' }}>
+                        <label class="form-check-label" for="aliyun_enabled">
+                            启用阿里云OCR API
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="aliyun_access_key_id" class="form-label">Access Key ID</label>
+                        <input type="text" class="form-control" id="aliyun_access_key_id" name="access_key_id" 
+                               value="{{ config.aliyun.access_key_id }}" placeholder="请输入阿里云Access Key ID">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="aliyun_access_key_secret" class="form-label">Access Key Secret</label>
+                        <input type="password" class="form-control" id="aliyun_access_key_secret" name="access_key_secret" 
+                               value="{{ config.aliyun.access_key_secret }}" placeholder="请输入阿里云Access Key Secret">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="aliyun_endpoint" class="form-label">服务端点</label>
+                        <input type="text" class="form-control" id="aliyun_endpoint" name="endpoint" 
+                               value="{{ config.aliyun.endpoint }}" placeholder="ocr.cn-shanghai.aliyuncs.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="aliyun_confidence" class="form-label">置信度阈值</label>
+                        <input type="number" class="form-control" id="aliyun_confidence" name="confidence_threshold" 
+                               value="{{ config.aliyun.confidence_threshold }}" min="0" max="1" step="0.1">
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="testAPI('aliyun')">测试连接</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Azure OCR配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Azure OCR API</h5>
+                <span class="badge bg-{{ 'success' if config.azure.enabled else 'secondary' }}">
+                    {{ '已启用' if config.azure.enabled else '未启用' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_api_config') }}">
+                    <input type="hidden" name="provider" value="azure">
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enabled" id="azure_enabled" 
+                               {{ 'checked' if config.azure.enabled else '' }}>
+                        <label class="form-check-label" for="azure_enabled">
+                            启用Azure OCR API
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="azure_subscription_key" class="form-label">Subscription Key</label>
+                        <input type="password" class="form-control" id="azure_subscription_key" name="subscription_key" 
+                               value="{{ config.azure.subscription_key }}" placeholder="请输入Azure订阅密钥">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="azure_endpoint" class="form-label">服务端点</label>
+                        <input type="text" class="form-control" id="azure_endpoint" name="endpoint" 
+                               value="{{ config.azure.endpoint }}" placeholder="https://your-resource.cognitiveservices.azure.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="azure_confidence" class="form-label">置信度阈值</label>
+                        <input type="number" class="form-control" id="azure_confidence" name="confidence_threshold" 
+                               value="{{ config.azure.confidence_threshold }}" min="0" max="1" step="0.1">
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="testAPI('azure')">测试连接</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google OCR配置 -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Google Vision API</h5>
+                <span class="badge bg-{{ 'success' if config.google.enabled else 'secondary' }}">
+                    {{ '已启用' if config.google.enabled else '未启用' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_api_config') }}">
+                    <input type="hidden" name="provider" value="google">
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="enabled" id="google_enabled" 
+                               {{ 'checked' if config.google.enabled else '' }}>
+                        <label class="form-check-label" for="google_enabled">
+                            启用Google Vision API
+                        </label>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="google_api_key" class="form-label">API Key</label>
+                        <input type="password" class="form-control" id="google_api_key" name="api_key" 
+                               value="{{ config.google.api_key }}" placeholder="请输入Google API Key">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="google_confidence" class="form-label">置信度阈值</label>
+                        <input type="number" class="form-control" id="google_confidence" name="confidence_threshold" 
+                               value="{{ config.google.confidence_threshold }}" min="0" max="1" step="0.1">
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">保存配置</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="testAPI('google')">测试连接</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 配置说明 -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">配置说明</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>百度OCR API</h6>
+                        <ul class="small">
+                            <li>访问 <a href="https://cloud.baidu.com/product/ocr" target="_blank">百度智能云OCR</a> 获取API密钥</li>
+                            <li>支持中英文混合识别</li>
+                            <li>每月有免费额度</li>
+                        </ul>
+                        
+                        <h6>腾讯云OCR API</h6>
+                        <ul class="small">
+                            <li>访问 <a href="https://cloud.tencent.com/product/ocr" target="_blank">腾讯云OCR</a> 获取密钥</li>
+                            <li>需要安装腾讯云SDK</li>
+                            <li>支持多种文档类型</li>
+                        </ul>
+                        
+                        <h6>阿里云OCR API</h6>
+                        <ul class="small">
+                            <li>访问 <a href="https://www.aliyun.com/product/ocr" target="_blank">阿里云OCR</a> 获取密钥</li>
+                            <li>需要安装阿里云SDK</li>
+                            <li>识别准确率较高</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Azure Computer Vision</h6>
+                        <ul class="small">
+                            <li>访问 <a href="https://azure.microsoft.com/services/cognitive-services/computer-vision/" target="_blank">Azure认知服务</a> 获取密钥</li>
+                            <li>支持多种语言</li>
+                            <li>提供详细的文本位置信息</li>
+                        </ul>
+                        
+                        <h6>Google Vision API</h6>
+                        <ul class="small">
+                            <li>访问 <a href="https://cloud.google.com/vision" target="_blank">Google Cloud Vision</a> 获取API密钥</li>
+                            <li>识别精度很高</li>
+                            <li>支持多种图像格式</li>
+                        </ul>
+                        
+                        <h6>使用建议</h6>
+                        <ul class="small">
+                            <li>可以同时启用多个API作为备选</li>
+                            <li>置信度阈值建议设置为0.8</li>
+                            <li>定期检查API使用量和费用</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function testAPI(provider) {
+    const button = event.target;
+    const originalText = button.textContent;
+    
+    button.disabled = true;
+    button.textContent = '测试中...';
+    
+    fetch(`/admin/test-api/${provider}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`${provider.toUpperCase()} API测试成功: ${data.message}`);
+            } else {
+                alert(`${provider.toUpperCase()} API测试失败: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            alert(`测试失败: ${error.message}`);
+        })
+        .finally(() => {
+            button.disabled = false;
+            button.textContent = originalText;
+        });
+}
+</script>
+{% endblock %}
