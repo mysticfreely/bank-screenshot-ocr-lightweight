@@ -29,54 +29,10 @@ RUN pip install --no-cache-dir -r requirements.lightweight.txt
 COPY lightweight_ocr_processor.py .
 COPY enterprise_app.py .
 COPY templates/ templates/
+COPY config/ config/
 
 # 创建必要的目录
-RUN mkdir -p uploads results logs config
-
-# 创建默认配置文件
-RUN cat > config/api_config.json << 'EOF'
-{
-  "ocr_apis": {
-    "baidu": {
-      "enabled": false,
-      "api_key": "",
-      "secret_key": "",
-      "url": "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic",
-      "confidence_threshold": 0.8
-    },
-    "tencent": {
-      "enabled": false,
-      "secret_id": "",
-      "secret_key": "",
-      "region": "ap-beijing",
-      "confidence_threshold": 0.8
-    },
-    "aliyun": {
-      "enabled": false,
-      "access_key_id": "",
-      "access_key_secret": "",
-      "endpoint": "ocr.cn-shanghai.aliyuncs.com",
-      "confidence_threshold": 0.8
-    },
-    "azure": {
-      "enabled": false,
-      "subscription_key": "",
-      "endpoint": "",
-      "confidence_threshold": 0.8
-    },
-    "google": {
-      "enabled": false,
-      "api_key": "",
-      "confidence_threshold": 0.8
-    }
-  },
-  "image_preprocessing": {
-    "max_size": 4096,
-    "quality": 85,
-    "format": "JPEG"
-  }
-}
-EOF
+RUN mkdir -p uploads results logs
 
 # 设置权限
 RUN chmod +x enterprise_app.py
