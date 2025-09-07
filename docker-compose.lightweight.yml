@@ -1,0 +1,82 @@
+# 轻量级银行截图OCR处理器 Docker Compose配置
+# 基于API调用，内存占用小，部署简单
+
+version: '3.8'
+
+services:
+  bank-ocr-lightweight:
+    build:
+      context: .
+      dockerfile: Dockerfile.lightweight
+    container_name: bank-ocr-lightweight
+    ports:
+      - "5000:5000"
+    volumes:
+      # 配置文件挂载
+      - ./config:/app/config
+      # 上传文件存储
+      - ./uploads:/app/uploads
+      # 结果文件存储
+      - ./results:/app/results
+      # 日志文件存储
+      - ./logs:/app/logs
+      # 银行数据库文件
+      - ./公司在用银行库20250412.xlsx:/app/公司在用银行库20250412.xlsx
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=enterprise_app.py
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - bank-ocr-network
+    labels:
+      - "com.bank-ocr.service=lightweight"
+      - "com.bank-ocr.version=1.0.0"
+      - "com.bank-ocr.description=轻量级银行截图OCR处理器"
+
+  # 可选：添加Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: bank-ocr-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - bank-ocr-lightweight
+    restart: unless-stopped
+    networks:
+      - bank-ocr-network
+    profiles:
+      - production
+
+  # 可选：添加Redis缓存
+  redis:
+    image: redis:alpine
+    container_name: bank-ocr-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - bank-ocr-network
+    profiles:
+      - cache
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  bank-ocr-network:
+    driver: bridge
+    name: bank-ocr-network
