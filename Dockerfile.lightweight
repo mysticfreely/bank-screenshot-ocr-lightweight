@@ -34,7 +34,8 @@ COPY templates/ templates/
 RUN mkdir -p uploads results logs config
 
 # 创建默认配置文件
-RUN echo '{
+RUN cat > config/api_config.json << 'EOF'
+{
   "ocr_apis": {
     "baidu": {
       "enabled": false,
@@ -74,7 +75,8 @@ RUN echo '{
     "quality": 85,
     "format": "JPEG"
   }
-}' > config/api_config.json
+}
+EOF
 
 # 设置权限
 RUN chmod +x enterprise_app.py
