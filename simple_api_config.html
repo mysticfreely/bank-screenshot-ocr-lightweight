@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API配置 - 银行截图OCR系统</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .navbar { background-color: #007bff; padding: 10px 0; margin-bottom: 20px; }
+        .navbar a { color: white; text-decoration: none; margin: 0 15px; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        .btn-success { background-color: #28a745; }
+        .btn-success:hover { background-color: #218838; }
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; }
+        .alert-success { background-color: #d4edda; color: #155724; }
+        .alert-error { background-color: #f8d7da; color: #721c24; }
+        .status-enabled { color: #28a745; font-weight: bold; }
+        .status-disabled { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a href="/">首页</a>
+            <a href="/upload">上传处理</a>
+            <a href="/admin">管理后台</a>
+            <a href="/admin/api-config">API配置</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>OCR API配置管理</h1>
+        <p>配置第三方OCR API服务，支持多个提供商</p>
+        
+        <!-- 百度OCR配置 -->
+        <div class="card">
+            <h3>百度OCR API <span class="status-disabled">(推荐)</span></h3>
+            <form method="POST" action="/admin/api-config/update">
+                <input type="hidden" name="provider" value="baidu">
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="enabled"> 启用百度OCR API
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="baidu_api_key">API Key:</label>
+                    <input type="text" id="baidu_api_key" name="api_key" placeholder="请输入百度API Key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="baidu_secret_key">Secret Key:</label>
+                    <input type="password" id="baidu_secret_key" name="secret_key" placeholder="请输入百度Secret Key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="baidu_confidence">置信度阈值:</label>
+                    <input type="number" id="baidu_confidence" name="confidence_threshold" value="0.8" min="0" max="1" step="0.1">
+                </div>
+                
+                <button type="submit" class="btn">保存配置</button>
+                <button type="button" class="btn btn-success" onclick="testAPI('baidu')">测试连接</button>
+            </form>
+        </div>
+        
+        <!-- Azure OCR配置 -->
+        <div class="card">
+            <h3>Azure OCR API</h3>
+            <form method="POST" action="/admin/api-config/update">
+                <input type="hidden" name="provider" value="azure">
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="enabled"> 启用Azure OCR API
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="azure_subscription_key">Subscription Key:</label>
+                    <input type="password" id="azure_subscription_key" name="subscription_key" placeholder="请输入Azure订阅密钥">
+                </div>
+                
+                <div class="form-group">
+                    <label for="azure_endpoint">服务端点:</label>
+                    <input type="text" id="azure_endpoint" name="endpoint" placeholder="https://your-resource.cognitiveservices.azure.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="azure_confidence">置信度阈值:</label>
+                    <input type="number" id="azure_confidence" name="confidence_threshold" value="0.8" min="0" max="1" step="0.1">
+                </div>
+                
+                <button type="submit" class="btn">保存配置</button>
+                <button type="button" class="btn btn-success" onclick="testAPI('azure')">测试连接</button>
+            </form>
+        </div>
+        
+        <!-- Google OCR配置 -->
+        <div class="card">
+            <h3>Google Vision API</h3>
+            <form method="POST" action="/admin/api-config/update">
+                <input type="hidden" name="provider" value="google">
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="enabled"> 启用Google Vision API
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="google_api_key">API Key:</label>
+                    <input type="password" id="google_api_key" name="api_key" placeholder="请输入Google API Key">
+                </div>
+                
+                <div class="form-group">
+                    <label for="google_confidence">置信度阈值:</label>
+                    <input type="number" id="google_confidence" name="confidence_threshold" value="0.8" min="0" max="1" step="0.1">
+                </div>
+                
+                <button type="submit" class="btn">保存配置</button>
+                <button type="button" class="btn btn-success" onclick="testAPI('google')">测试连接</button>
+            </form>
+        </div>
+        
+        <!-- 配置说明 -->
+        <div class="card">
+            <h3>配置说明</h3>
+            <h4>百度OCR API（推荐）</h4>
+            <ul>
+                <li>访问 <a href="https://cloud.baidu.com/product/ocr" target="_blank">百度智能云OCR</a> 获取API密钥</li>
+                <li>成本低，中文识别效果好</li>
+                <li>每月有免费额度</li>
+            </ul>
+            
+            <h4>Azure OCR API</h4>
+            <ul>
+                <li>访问 <a href="https://azure.microsoft.com/services/cognitive-services/computer-vision/" target="_blank">Azure认知服务</a> 获取密钥</li>
+                <li>企业级稳定性</li>
+                <li>支持多种语言</li>
+            </ul>
+            
+            <h4>Google Vision API</h4>
+            <ul>
+                <li>访问 <a href="https://cloud.google.com/vision" target="_blank">Google Cloud Vision</a> 获取API密钥</li>
+                <li>识别精度最高</li>
+                <li>支持多种图像格式</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+    function testAPI(provider) {
+        const button = event.target;
+        const originalText = button.textContent;
+        
+        button.disabled = true;
+        button.textContent = '测试中...';
+        
+        fetch(`/admin/test-api/${provider}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`${provider.toUpperCase()} API测试成功: ${data.message}`);
+                } else {
+                    alert(`${provider.toUpperCase()} API测试失败: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                alert(`测试失败: ${error.message}`);
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.textContent = originalText;
+            });
+    }
+    </script>
+</body>
+</html>
