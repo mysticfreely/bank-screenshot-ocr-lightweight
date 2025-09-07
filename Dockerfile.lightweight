@@ -25,14 +25,13 @@ COPY requirements.lightweight.txt .
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.lightweight.txt
 
-# 复制应用代码
+# 复制应用代码（使用修复版）
 COPY lightweight_ocr_processor_fixed.py ./lightweight_ocr_processor.py
-COPY enterprise_app.py .
-COPY templates/ templates/
+COPY enterprise_app_fixed.py ./enterprise_app.py
 COPY config/ config/
 
 # 创建必要的目录
-RUN mkdir -p uploads results logs
+RUN mkdir -p uploads results logs templates templates/admin templates/errors
 
 # 设置权限
 RUN chmod +x enterprise_app.py
@@ -49,7 +48,7 @@ CMD ["python", "enterprise_app.py"]
 
 # 镜像信息
 LABEL maintainer="Bank OCR Team"
-LABEL version="1.0.0-lightweight-fixed"
-LABEL description="轻量级银行截图OCR处理器 - 基于API调用（修复版）"
+LABEL version="1.0.0-lightweight-final"
+LABEL description="轻量级银行截图OCR处理器 - 完全修复版"
 LABEL memory_usage="~300MB"
 LABEL features="multi-api-support,web-interface,batch-processing"
