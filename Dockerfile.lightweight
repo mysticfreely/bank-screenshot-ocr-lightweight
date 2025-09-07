@@ -16,6 +16,7 @@ ENV FLASK_ENV=production
 RUN apt-get update && apt-get install -y \
     gcc \
     libc6-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制依赖文件
@@ -28,10 +29,52 @@ RUN pip install --no-cache-dir -r requirements.lightweight.txt
 COPY lightweight_ocr_processor.py .
 COPY enterprise_app.py .
 COPY templates/ templates/
-COPY config/ config/
 
 # 创建必要的目录
-RUN mkdir -p uploads results logs
+RUN mkdir -p uploads results logs config
+
+# 创建默认配置文件
+RUN echo '{
+  "ocr_apis": {
+    "baidu": {
+      "enabled": false,
+      "api_key": "",
+      "secret_key": "",
+      "url": "https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic",
+      "confidence_threshold": 0.8
+    },
+    "tencent": {
+      "enabled": false,
+      "secret_id": "",
+      "secret_key": "",
+      "region": "ap-beijing",
+      "confidence_threshold": 0.8
+    },
+    "aliyun": {
+      "enabled": false,
+      "access_key_id": "",
+      "access_key_secret": "",
+      "endpoint": "ocr.cn-shanghai.aliyuncs.com",
+      "confidence_threshold": 0.8
+    },
+    "azure": {
+      "enabled": false,
+      "subscription_key": "",
+      "endpoint": "",
+      "confidence_threshold": 0.8
+    },
+    "google": {
+      "enabled": false,
+      "api_key": "",
+      "confidence_threshold": 0.8
+    }
+  },
+  "image_preprocessing": {
+    "max_size": 4096,
+    "quality": 85,
+    "format": "JPEG"
+  }
+}' > config/api_config.json
 
 # 设置权限
 RUN chmod +x enterprise_app.py
