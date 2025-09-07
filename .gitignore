@@ -1,0 +1,284 @@
+# 轻量级银行截图OCR处理器 - Git忽略文件
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PYTHONPATH
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# 应用特定文件
+# 上传的图片文件
+uploads/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.webp
+
+# 处理结果文件
+results/
+*.xlsx
+*.html
+*.csv
+
+# 日志文件
+logs/
+*.log
+
+# 配置文件（包含敏感信息）
+config/api_config.json
+config/production.json
+.env.local
+.env.production
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+公司在用银行库*.xlsx
+银行数据库*.xlsx
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+*.temp
+
+# 系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 备份文件
+*.bak
+*.backup
+*.old
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 测试文件
+test_images/
+sample_data/
+
+# 部署相关
+nginx.conf
+ssl/
+certs/
+
+# 性能分析
+*.prof
+
+# 缓存
+.cache/
+cache/
+
+# 文档生成
+docs/_build/
+docs/build/
+
+# 本地开发
+local_config.py
+development.env
+
+# API密钥和敏感信息
+api_keys.txt
+secrets.json
+credentials.json
+*.pem
+*.key
+*.crt
+
+# 大文件
+*.model
+*.weights
+*.h5
+
+# 用户数据
+user_data/
+private/
+
+# 统计和分析
+stats/
+analytics/
+
+# 第三方库
+node_modules/
+bower_components/
+
+# 操作系统
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# 网络文件
+.netrwhist
+
+# 标签
+tags
+TAGS
+
+# 数据文件
+data/
+datasets/
+*.csv
+*.json
+*.xml
+
+# 模型文件
+models/
+checkpoints/
+
+# 输出文件
+output/
+exports/
